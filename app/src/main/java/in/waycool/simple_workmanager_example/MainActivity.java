@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
@@ -18,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String KEY_COUNT_VALUE="key_count";
+    public static final String KEY_COUNT_VALUE = "key_count";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +32,15 @@ public class MainActivity extends AppCompatActivity {
 
         ///////////////////////adding constraints////////////////////
 
-        Data data=new Data.Builder()
-                .putInt(KEY_COUNT_VALUE,1750)    //sending data to work manager
+        Data data = new Data.Builder()
+                .putInt(KEY_COUNT_VALUE, 1750)    //sending data to work manager
                 .build();
-        Constraints constraints=new Constraints.Builder()
+        Constraints constraints = new Constraints.Builder()
                 .setRequiresCharging(true)  // we can have more than one constraints
+                // .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
 
         ///////////////////////
-
-
 
 
         final OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(DemoWorker.class) //with constraints
@@ -71,13 +71,14 @@ public class MainActivity extends AppCompatActivity {
                         }
 
 
-                        if(workInfo.getState().isFinished())     //get success data here
+                        if (workInfo.getState().isFinished())     //get success data here
                         {
-                            Data data1=workInfo.getOutputData();
-                            String message=data1.getString(DemoWorker.KEY_WORKER);
+                            Data data1 = workInfo.getOutputData();
+                            String message = data1.getString(DemoWorker.KEY_WORKER);
                             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
 }
